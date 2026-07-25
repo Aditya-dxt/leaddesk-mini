@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Search, Inbox, LogOut, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 type Lead = {
   id: string;
@@ -18,6 +20,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const fetchLeads = async () => {
     try {
@@ -63,6 +66,13 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/admin/login");
+    router.refresh();
+  };
+
   const filteredLeads = leads.filter(lead => 
     lead.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     lead.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -88,7 +98,10 @@ export default function AdminDashboard() {
             </div>
             <span className="font-display font-bold text-lg tracking-tight">LeadDesk Mini</span>
           </div>
-          <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
             <LogOut size={16} />
             Logout
           </button>
