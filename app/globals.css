@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0a0a;
+  --color-foreground: #ffffff;
+  --color-accent: #ccff00;
+  --color-accent-hover: #b3e600;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+  
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-outfit);
+}
+
+@layer base {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ffffff;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
