@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function LeadForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -54,28 +55,46 @@ export function LeadForm() {
 
   if (status === "success") {
     return (
-      <div className="bg-muted p-8 rounded-xl border border-muted-foreground/20 text-center space-y-4">
-        <div className="flex justify-center text-accent">
-          <CheckCircle2 size={48} />
-        </div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-muted p-8 rounded-xl border border-muted-foreground/20 text-center space-y-4"
+      >
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+          className="flex justify-center text-accent"
+        >
+          <CheckCircle2 size={56} />
+        </motion.div>
         <h3 className="text-2xl font-display font-bold text-foreground">You're on the list!</h3>
         <p className="text-muted-foreground">
           We've received your request and will be in touch within 24 hours.
         </p>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="bg-muted p-8 rounded-xl border border-muted-foreground/20 w-full max-w-md mx-auto">
+    <div className="bg-muted p-8 rounded-xl border border-muted-foreground/20 w-full max-w-md mx-auto shadow-xl">
       <h3 className="text-2xl font-display font-bold mb-6 text-foreground">Start your project</h3>
       
-      {status === "error" && errorMessage && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3 text-red-500">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-          <p className="text-sm">{errorMessage}</p>
-        </div>
-      )}
+      <AnimatePresence>
+        {status === "error" && errorMessage && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3 text-red-500">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+              <p className="text-sm">{errorMessage}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -84,10 +103,14 @@ export function LeadForm() {
             type="text"
             id="name"
             name="name"
-            className={`w-full bg-background border ${errors.name ? 'border-red-500' : 'border-muted-foreground/30'} rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent`}
+            className={`w-full bg-background border ${errors.name ? 'border-red-500' : 'border-muted-foreground/30'} rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-colors`}
             placeholder="Jane Doe"
           />
-          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          <AnimatePresence>
+            {errors.name && (
+              <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-red-500 text-xs mt-1.5 font-medium">{errors.name}</motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
         <div>
@@ -96,10 +119,14 @@ export function LeadForm() {
             type="email"
             id="email"
             name="email"
-            className={`w-full bg-background border ${errors.email ? 'border-red-500' : 'border-muted-foreground/30'} rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent`}
+            className={`w-full bg-background border ${errors.email ? 'border-red-500' : 'border-muted-foreground/30'} rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-colors`}
             placeholder="jane@example.com"
           />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          <AnimatePresence>
+            {errors.email && (
+              <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-red-500 text-xs mt-1.5 font-medium">{errors.email}</motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
         <div>
@@ -107,15 +134,20 @@ export function LeadForm() {
           <select
             id="budget_range"
             name="budget_range"
-            className={`w-full bg-background border ${errors.budget_range ? 'border-red-500' : 'border-muted-foreground/30'} rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent appearance-none`}
+            defaultValue=""
+            className={`w-full bg-background border ${errors.budget_range ? 'border-red-500' : 'border-muted-foreground/30'} rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent appearance-none transition-colors`}
           >
-            <option value="" disabled selected>Select a budget</option>
+            <option value="" disabled>Select a budget</option>
             <option value="<$1k">{"<$1k"}</option>
             <option value="$1k-5k">$1k - $5k</option>
             <option value="$5k-20k">$5k - $20k</option>
             <option value="$20k+">$20k+</option>
           </select>
-          {errors.budget_range && <p className="text-red-500 text-xs mt-1">{errors.budget_range}</p>}
+          <AnimatePresence>
+            {errors.budget_range && (
+              <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-red-500 text-xs mt-1.5 font-medium">{errors.budget_range}</motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
         <div>
@@ -124,19 +156,21 @@ export function LeadForm() {
             id="message"
             name="message"
             rows={4}
-            className="w-full bg-background border border-muted-foreground/30 rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+            className="w-full bg-background border border-muted-foreground/30 rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
             placeholder="Tell us about your goals..."
           ></textarea>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={status === "loading"}
-          className="w-full bg-accent text-background font-bold py-3 px-4 rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
+          className="w-full bg-accent text-background font-bold py-3 px-4 rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed mt-4 shadow-lg shadow-accent/20"
         >
           {status === "loading" && <Loader2 className="w-5 h-5 animate-spin" />}
           {status === "loading" ? "Submitting..." : "Get Started"}
-        </button>
+        </motion.button>
       </form>
     </div>
   );
