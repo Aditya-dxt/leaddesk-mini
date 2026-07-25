@@ -70,6 +70,10 @@ export default function Home() {
         </motion.div>
         
       </div>
+
+      <footer className="w-full mt-24 pt-8 border-t border-muted-foreground/10 text-center text-sm text-muted-foreground">
+        Built for Digital Heroes Training Task · <a href="https://digitalheroesco.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">digitalheroesco.com</a>
+      </footer>
     </main>
   );
 }
