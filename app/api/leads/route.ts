@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("leads")
       .insert([
         {
@@ -29,16 +29,14 @@ export async function POST(request: Request) {
           budget_range,
           message: message?.trim() || null,
         }
-      ])
-      .select()
-      .single();
+      ]);
 
     if (error) {
       console.error("Supabase insert error:", error);
       return NextResponse.json({ error: "Failed to submit lead" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, data }, { status: 201 });
+    return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error("POST /api/leads error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
